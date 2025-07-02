@@ -60,7 +60,7 @@
     function buatSoal() {
       const kode = prompt("Masukkan kode soal:");
       const edit = prompt("Masukkan kode edit:");
-      if (!kode || !edit) return alert("Wajib isi kedua kode soal dan edit");
+      if (!kode || !edit) return alert("Wajib isi kedua kode!");
       if (!soalData[kode]) {
         soalData[kode] = [];
         laporanData[kode] = [];
@@ -214,10 +214,28 @@
     function lihatLaporan() {
       const kode = prompt("Kode soal?");
       if (!laporanData[kode] || laporanData[kode].length === 0) return alert("Belum ada laporan.");
-      let html = `<h2 class='font-bold mb-2'>Laporan Kode: ${kode}</h2><ul class='list-disc pl-5'>`;
-      laporanData[kode].forEach(l => html += `<li>${l.nama}: ${l.skor}/${l.maks}</li>`);
-      html += `</ul>`;
+
+      let html = `
+        <h2 class='font-bold mb-2'>Laporan Kode: ${kode}</h2>
+        <input type="text" id="cariNama" placeholder="Cari nama..." class="mb-4 p-2 border rounded w-full" oninput="filterLaporan()">
+        <ul id="daftarLaporan" class='list-disc pl-5'>
+          ${laporanData[kode].map(l => `<li>${l.nama}: ${l.skor}/${l.maks}</li>`).join("")}
+        </ul>
+      `;
+
       document.getElementById("content").innerHTML = html;
+      window.laporanKodeAktif = kode;
+    }
+
+    function filterLaporan() {
+      const input = document.getElementById("cariNama").value.toLowerCase();
+      const daftar = document.getElementById("daftarLaporan");
+      const data = laporanData[window.laporanKodeAktif] || [];
+
+      daftar.innerHTML = data
+        .filter(l => l.nama.toLowerCase().includes(input))
+        .map(l => `<li>${l.nama}: ${l.skor}/${l.maks}</li>`)
+        .join("");
     }
 
     function editSoal() {
